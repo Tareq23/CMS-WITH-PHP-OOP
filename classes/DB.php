@@ -33,6 +33,8 @@ class DB{
         $this->_result = null;
         if($this->_stmt = $this->_pdo->prepare($sql))
         {
+            //echo '<br>'.$sql.'<br>';
+            //die();
             if(count($fields))
             {
                 $index = 1;
@@ -91,7 +93,7 @@ class DB{
                 }
                 $cnt++;
             }
-            $sql = "INSERT INTO {$table} {$columns} {$value}";
+            $sql = "INSERT INTO {$table}({$columns}) VALUES ({$value})";
             return $this->query($sql,$fields);
         }
         else{
@@ -100,7 +102,7 @@ class DB{
     }
     private function checkOperator($operator='')
     {
-        $operators = array('>','<','>=','<=','=');
+        $operators = array('>','<','>=','<=','=','LIKE');
         return (in_array($operator,$operators))?true:false;
     }
     public function delete($table=null,$operator,$fields=array())
@@ -134,22 +136,12 @@ class DB{
         }
 
     }
-    public function get($table,$fields=array(),$operator,$value = array())
+    public function get($table,$operator,$fields = array())
     {
         if(count($fields)&&$this->checkOperator($operator))
         {
-            $columns = '';
-            $cnt = 1;
-            $condition_field = array_keys($value);
-            foreach($fields as $key => $field)
-            {
-                $columns .= $key;
-                if($cnt<count($fields))
-                {
-                    $columns .= ',';
-                }
-            }
-            $sql = "SELECT {$columns} FROM {$table} WHERE {$condition_field} {$operator} {$value[$condition_field]}";
+            $condition_field = array_keys($fields);
+            $sql = "SELECT * FROM {$table} WHERE {$condition_field[0]} {$operator} ?";
             return $this->query($sql,$fields);
         }
 

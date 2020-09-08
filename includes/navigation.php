@@ -16,7 +16,17 @@
 
 
                     <?php 
-                    
+
+                        require_once 'init/init.php';
+                        $categories = DB::connect()->getAll('categories')->fetchAll()->result();
+
+                        foreach($categories as $category)
+                        {
+                            ?>
+                            <li><a href="#"><?php echo $category->cat_title; ?></a></li>
+                            <?php
+                        }
+
                     ?>
 
                     <!-- <li>
