@@ -110,7 +110,7 @@ class DB{
         if(count($fields)&&$this->checkOperator($operator))
         {
             $condition_field = array_keys($fields);
-            $sql = "DELETE FROM {$table} WHERE {$condition_field} {$operator} ?";
+            $sql = "DELETE FROM {$table} WHERE {$condition_field[0]} {$operator} ?";
             return $this->query($sql,$fields);
         }
     }
@@ -122,6 +122,8 @@ class DB{
             $cnt = 1;
             $value = '';
             $condition_field = array_keys($condition);
+
+           // print_r($condition);
             foreach($fields as $key => $field)
             {
                 $columns .= $key . '=?';
@@ -131,7 +133,9 @@ class DB{
                     $value .= ',';
                 }
             }
-            $sql = "UPDATE {$table} SET {$columns} WHERE {$condition_field} {$operator} {$condition[$condition_field]}";
+            $sql = "UPDATE {$table} SET {$columns} WHERE {$condition_field[0]} {$operator} {$condition[$condition_field[0]]}";
+            // echo $sql;
+            // die();
             return $this->query($sql,$fields);
         }
 
