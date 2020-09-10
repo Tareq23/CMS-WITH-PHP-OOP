@@ -33,8 +33,14 @@ include_once 'includes/navigation.php';
                 </h1>
                 <div>
                     <?php
+                    // $value = $_SERVER['REQUEST_METHOD'];
+                    // echo $value;
+                    //die();
                     $update_id = (isset($_GET['update_id']))?$_GET['update_id']: '';
                     $category = DB::connect()->get('categories','=',array('cat_id'=>$update_id))->fetch()->result(); 
+                    // $value = $_SERVER['REQUEST_METHOD'];
+                    // echo $value;
+                    // die();
                     if(isset($_REQUEST['update_category']))
                     {
                         if(Token::check($_POST['token'])){
@@ -81,10 +87,6 @@ include_once 'includes/navigation.php';
                             <tr>
                                 <td><?php echo $category->cat_id; ?></td>
                                 <td><?php echo $category->cat_title; ?></td>
-                                <td>
-                                    <td><a href="?delete_id=<?php echo $category->cat_id;?>">Delete</a></td>
-                                    <td><a href="update_category.php?update_id=<?php echo $category->cat_id;?>">Update</a></td>
-                                </td>
                             </tr>
                             <?php endforeach;?>
                         </tbody>

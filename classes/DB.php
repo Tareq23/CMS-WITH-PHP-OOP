@@ -41,8 +41,10 @@ class DB{
                 foreach($fields as $field)
                 {
                     $this->_stmt->bindParam($index,$field);
+                    //echo "$index -----> $field<br>";
                     $index++;
                 }
+                //die();
             }
             if($this->_stmt->execute())
             {
@@ -94,6 +96,8 @@ class DB{
                 $cnt++;
             }
             $sql = "INSERT INTO {$table}({$columns}) VALUES ({$value})";
+            //echo $sql.'<br>';
+            //die();
             return $this->query($sql,$fields);
         }
         else{
