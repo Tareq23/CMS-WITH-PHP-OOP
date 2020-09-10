@@ -40,7 +40,7 @@ class DB{
                 $index = 1;
                 foreach($fields as $field)
                 {
-                    $this->_stmt->bindParam($index,$field);
+                    $this->_stmt->bindValue($index,$field);
                     //echo "$index -----> $field<br>";
                     $index++;
                 }
