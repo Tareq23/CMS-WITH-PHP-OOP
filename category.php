@@ -17,7 +17,8 @@ include_once  'includes/header.php';
             <div class="col-md-8">
                 
                 <?php 
-                   $posts =  DB::connect()->get('posts','=',array('post_status'=>'published'))->fetchAll()->result();
+                   if(Input::exists($_SERVER['REQUEST_METHOD'])&&(!empty(Input::get('cat_id')))){
+                   $posts =  DB::connect()->get('posts','=',array('post_category_id'=>Input::get('cat_id')))->fetchAll()->result();
                    foreach($posts as $post):
                 ?>
 
@@ -31,13 +32,11 @@ include_once  'includes/header.php';
                     <a href="post.php?post_id=<?php echo $post->post_id;?>"><?php echo $post->post_title ;?></a>
                 </h2>
                 <p class="lead">
-                   Created By <a href="post.php?author=<?php echo $post->post_author;?>&post_id=<?php echo $post->post_id; ?>"><?php echo $post->post_author;?></a>
+                    by <a href="index.php"><?php echo $post->post_author;?></a>
                 </p>
                 <p><span class="glyphicon glyphicon-time"></span> Posted on <?php echo $post->post_date;?></p>
                 <hr>
-                <a href="post.php?post_id=<?php echo $post->post_id; ?>">
-                    <img class="img-responsive" src="img/<?php echo $post->post_image;?>" alt="Default Image">
-                </a>
+                <img class="img-responsive" src="img/<?php echo $post->post_image;?>" alt="Default Image">
                 <hr>
                 <p><?php echo substr($post->post_content,0,strlen($post->post_content)/3); ?></p>
                 <a class="btn btn-primary" href="post.php?post_id=<?php echo $post->post_id; ?>">Read More <span class="glyphicon glyphicon-chevron-right"></span></a>
@@ -46,7 +45,9 @@ include_once  'includes/header.php';
 
 
                 <hr>
-                   <?php endforeach;?>
+                   <?php endforeach;
+                   }
+                   ?>
             </div>
 
             <!-- Blog Sidebar Widgets Column -->

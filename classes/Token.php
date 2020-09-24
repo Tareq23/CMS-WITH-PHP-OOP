@@ -7,15 +7,17 @@ class Token{
     {
 
     }
-    public static function generate()
+    public static function generate($name='token')
     {
-        return Session::put('token',md5(uniqid()));
+        return Session::put($name,md5(uniqid()));
     }
-    public static function check($value)
+    public static function check($value,$name='token')
     {
-        if(Session::exists('token')&&$value===Session::get('token'))
+        // echo 'value -> '.$value.'<br>';
+        // echo 'session-get -> '.Session::get($name);
+        if(Session::exists($name)&&$value==Session::get($name))
         {
-            Session::delete('token');
+            Session::delete($name);
             return true;
         }
         return false;

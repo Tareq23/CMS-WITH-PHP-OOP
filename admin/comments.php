@@ -54,12 +54,9 @@ include_once 'includes/header.php';
                                 echo '200 pages';
                             break;
                             default:
-                            include_once 'includes/view_all_post.php';
+                            include_once 'includes/view_all_comment.php';
                         break;   
-                        }
-
-
-                        
+                        }                        
                         ?>
 
 
@@ -72,10 +69,6 @@ include_once 'includes/header.php';
 
         </div>
         <!-- /#page-wrapper -->
-
-
-
-
 
 <?php
     include_once 'includes/footer.php';

@@ -41,11 +41,11 @@ include_once 'includes/header.php';
                         }
                         switch($source)
                         {
-                            case 'add_post':
-                                include_once 'includes/add_post.php';
+                            case 'add_user':
+                                include_once 'includes/add_user.php';
                             break;
-                            case 'update_post':
-                                include_once 'includes/update_post.php';
+                            case 'update_user':
+                                include_once 'includes/update_user.php';
                             break;
                             // case 'delete_post':
                             //     include_once 'includes/delete_post.php';
@@ -54,7 +54,7 @@ include_once 'includes/header.php';
                                 echo '200 pages';
                             break;
                             default:
-                            include_once 'includes/view_all_post.php';
+                            include_once 'includes/view_all_user.php';
                         break;   
                         }
 

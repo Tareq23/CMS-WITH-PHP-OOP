@@ -1,6 +1,18 @@
 <?php 
 
 
+$post_type = $_SERVER['REQUEST_METHOD'];
+
+if(Input::exists($post_type))
+{
+
+    $posts = DB::connect()->get('posts','=',array('post_id'=>Input::get('post_id')))->fetch()->result();
+    //print_r($posts);
+}
+?>
+<?php 
+
+
     $post_type = $_SERVER['REQUEST_METHOD'];
     if(Input::exists($post_type))
     {
@@ -34,19 +46,25 @@
                     'require' => true,
                     'min'=>3,
                     'max' => 50
-                ),
-                'image' => array(
-                    'require' => true
                 )
+                // 'post_image' => array(
+                //     'require' => true
+                // )
             ));
             // echo count($validate->error()).'<br>';
            // var_dump($validate->error());
             //die();
             if(!count($validate->error()))
             {
-                $img_name = $_FILES['image']['name'];
-                $img_tmp = $_FILES['image']['tmp_name'];
-                $path = '../img/'.$img_name;
+                $img_name = $posts->post_image;
+                if($_FILES['post_image']['error']==0){
+                    $path = '../img/'.$img_name;
+                    unset($path);
+                    $img_name = $_FILES['post_image']['name'];
+                    $img_tmp = $_FILES['post_image']['tmp_name'];
+                    $path = '../img/'.$img_name;
+                    move_uploaded_file($img_tmp,$path);
+                }
 
                 $input = array(
                     'post_title' => Input::get('post_title'),
@@ -61,18 +79,24 @@
                 // echo "<pre>";
                 // print_r($input);
                 // echo '<br><br>';
-                $insert = DB::connect()->insert('posts',$input);
+                //echo Input::get('post_id');
+                //die();
+                $insert = DB::connect()->update('posts',$input,'=',array(
+                    'post_id' => Input::get('post_id')
+                ));
                 if($insert->count())
                 {
-                    Session::put('success',"Successfully Post Added");
-                    move_uploaded_file($img_tmp,$path);
+                    Session::put('success',"Successfully Post Updated");
+                    // ob_start();
+                    //header('location:../posts.php');
+                    // ob_end_flush();
                 }          
             }
             else{
                 $errors = $validate->error();
                 foreach($errors as $error)
                 {
-                    echo $error.'<br>';
+                   // echo $error.'<br>';
                 }
             }
         }
@@ -81,15 +105,20 @@
 
 ?>
 
-<?php if(Session::exists('success')){ ?>
-    <div class="success">
-        <p><?php echo $_SESSION['success'] ;Session::delete('success');?></p>
-    </div>
-<?php 
+
+
+
+<?php if(Session::exists('success')){ 
+
+
+///here success information;
+
+
 }
+
 ?>
 <div>
-    <h2>Add New post</h2>
+    <h2>Edit post</h2>
 </div>
 <div class="col-md-6">
 <form action="" method="post" enctype="multipart/form-data">
@@ -97,7 +126,7 @@
     <div class="form-group">
 
         <label for="post-title">Post Title</label>
-        <input type="text" id="post-title" name="post_title" class="form-control">
+        <input type="text" value="<?php echo $posts->post_title; ?>" id="post-title" name="post_title" class="form-control">
 
     </div>
     <div class="form-group">
@@ -107,48 +136,47 @@
         <label for="post-category-id">Post Category</label>
         <select class="form-control" name="post_category" id="post-category-id">
             <?php foreach($categories as $category): ?>
-            <option value="<?php echo $category->cat_id; ?>"><?php echo $category->cat_title;?></option>
+            <option <?php if($category->cat_id==$posts->post_category_id) echo "selected"; ?> value="<?php echo $category->cat_id; ?>"><?php echo $category->cat_title;?></option>
             <?php endforeach; ?>
         </select>
     </div>
     <div class="form-group">
+
         <label for="post-status">Post Status</label>
         <select class="form-control" name="post_status" id="post-status">
-            <option value="">Select One</option>
-            <option value="draft">Draft</option>
-            <option value="published">Published</option>
+            <option <?php if($posts->post_status==='draft'):?>selected<?php endif;?> value="draft">Draft</option>
+            <option <?php if($posts->post_status==='published'):?>selected<?php endif;?> value="published">Published</option>
         </select>
-        
-        <!-- <label for="post-status">Post Status</label>
-        <input type="text" name="post_status" id="post-status" class="form-control"> -->
     </div>
     <div class="form-group">
 
         <label for="post-author">Post Author</label>
-        <input type="text" name="post_author" id="post-author" class="form-control">
+        <input type="text" value="<?php echo $posts->post_author; ?>" name="post_author" id="post-author" class="form-control">
 
     </div>
     <div class="form-group">
 
         <label for="post-image">Post Image</label>
-        <input type="file" name="image" id="post-image" class="form-control">
+        <img style="width:50px;height:auto;" src="../img/<?php echo $posts->post_image;?>" alt="Previous Image">
+        <input type="file" name="post_image" id="post-image" class="form-control">
 
     </div>
     <div class="form-group">
 
         <label for="post-content">Post Content</label>
-        <textarea class="form-control" name="post_content" id="post-content" cols="30" rows="10"></textarea>
+        <textarea class="form-control" name="post_content" id="post-content" cols="30" rows="10"><?php echo $posts->post_content; ?>
+        </textarea>
 
     </div>
     <div class="form-group">
 
         <label for="post-tag">Post Tag</label>
-        <input type="text" name="post_tags" id="post-tag" class="form-control">
+        <input type="text" value="<?php echo $posts->post_tags;?>" name="post_tags" id="post-tag" class="form-control">
 
     </div>
     <div class="form-group">
         <input type="hidden" name="token" value="<?php echo Token::generate(); ?>">
-        <input type="submit" class="btn btn-primary" name="add_post" value="Publish Post">
+        <input type="submit" class="btn btn-primary" name="update_post" value="Publish Post">
     </div>
 </form>
 </div>

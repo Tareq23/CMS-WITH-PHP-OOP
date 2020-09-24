@@ -4,6 +4,7 @@ class DB{
 
     private static $_connect = null;
     private $_pdo,$_count=0,$_result=null,$_error=false,$_stmt;
+    private $_order='';
 
     public function __construct()
     {
@@ -96,8 +97,6 @@ class DB{
                 $cnt++;
             }
             $sql = "INSERT INTO {$table}({$columns}) VALUES ({$value})";
-            //echo $sql.'<br>';
-            //die();
             return $this->query($sql,$fields);
         }
         else{
@@ -114,11 +113,13 @@ class DB{
         if(count($fields)&&$this->checkOperator($operator))
         {
             $condition_field = array_keys($fields);
-            $sql = "DELETE FROM {$table} WHERE {$condition_field[0]} {$operator} ?";
+            $sql = "DELETE FROM {$table} WHERE {$condition_field[0]} {$operator} {$fields[$condition_field[0]]}";
+            // echo $sql;
+            // die();
             return $this->query($sql,$fields);
         }
     }
-    public function update($table=null,$fields=array(),$operator='',$condition = array())
+    public function update($table=null,$fields=array(),$operator='=',$condition = array())
     {
         if(count($fields)&&$this->checkOperator($operator))
         {
@@ -127,7 +128,6 @@ class DB{
             $value = '';
             $condition_field = array_keys($condition);
 
-           // print_r($condition);
             foreach($fields as $key => $field)
             {
                 $columns .= $key . '=?';
@@ -136,10 +136,10 @@ class DB{
                     $columns .= ',';
                     $value .= ',';
                 }
+                $cnt++;
             }
             $sql = "UPDATE {$table} SET {$columns} WHERE {$condition_field[0]} {$operator} {$condition[$condition_field[0]]}";
-            // echo $sql;
-            // die();
+
             return $this->query($sql,$fields);
         }
 
@@ -149,7 +149,8 @@ class DB{
         if(count($fields)&&$this->checkOperator($operator))
         {
             $condition_field = array_keys($fields);
-            $sql = "SELECT * FROM {$table} WHERE {$condition_field[0]} {$operator} ?";
+            $sql = "SELECT * FROM {$table} WHERE {$condition_field[0]} {$operator} ? {$this->_order}";
+            $this->_order='';
             return $this->query($sql,$fields);
         }
 
@@ -158,6 +159,25 @@ class DB{
     {
         $sql = "SELECT * FROM {$table}";
         return $this->query($sql);
+    }
+    public function orderBy($orders = array())
+    {
+        $this->_order='';
+        if(count($orders))
+        {
+            $cnt=1;
+            $field="ORDER BY ";
+            foreach($orders as $order)
+            {
+                $field .= $order;
+                if($cnt<count($orders))
+                {
+                    $field .= ',';
+                }
+            }
+            $this->_order=$field.' DESC';
+        }
+        return $this;
     }
     public function addTable()
     {

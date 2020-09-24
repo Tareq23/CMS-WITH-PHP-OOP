@@ -4,7 +4,7 @@ class Validate{
     private $_db,$_error=array(),$_count=0;
     public function __construct()
     {
-
+        $this->_db  = DB::connect();
     }
 
     public function validation($items) 
@@ -13,7 +13,7 @@ class Validate{
         {
             foreach($rules as $rule => $value)
             {
-                if($item=='post_image'&&$rule=='require')
+                if($item=='image'&&$rule=='require')
                 {
                     if($_FILES[$item]['name']==""||$_FILES[$item]['size']==0)
                     {
@@ -42,9 +42,17 @@ class Validate{
                             }
                         break;
                         case 'match':
-                            
+                            if(Input::get($item)!==Input::get($value))
+                            {
+                                $_error['confirm_password'] = "Password doesn't match";
+                            }
                         break;
                         case 'unique':
+                            $get = $this->_db->get($value,'=',array($item=>Input::get($item)))->fetch();
+                            if($get->count())
+                            {
+                                $_error[$item] = "{$item} already exists";
+                            }
                         break;
                     }
                 }

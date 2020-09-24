@@ -4,10 +4,6 @@ require_once 'init/init.php';
 //$obj = DB::connect()->insert('categories',array('cat_title'=>'C++'));
 $obj = DB::connect()->getAll('categories')->fetchAll()->result();
 
-
-
-
-
 ?>
 
 
